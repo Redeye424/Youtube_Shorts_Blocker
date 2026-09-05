@@ -1,4 +1,5 @@
-download as a zip, 
+click the code button, 
+then download as a zip, 
 go to the downloaded zip file in your files, 
 right click on the file then click extract all, 
 then click extract, 
