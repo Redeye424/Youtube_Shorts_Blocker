@@ -21,11 +21,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         console.log("Shorts watched:", ShortWatchedInARow);
     }
 
-    if (ShortWatchedInARow >= 3) {
+    if (ShortWatchedInARow >= 2) {
         ShortWatchedInARow = 0;
 
         chrome.tabs.update(tabId, {
-            url: 'https://www.youtube.com/shorts/A_LXWYHAbs0'
+            url: 'https://takeabreakbutton.com/break/koi-pond/'
         });
     }
 });
