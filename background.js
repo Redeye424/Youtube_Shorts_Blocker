@@ -25,7 +25,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         ShortWatchedInARow = 0;
 
         chrome.tabs.update(tabId, {
-            url: 'https://takeabreakbutton.com/break/koi-pond/'
+            url: 'https://homework42.pythonanywhere.com/Youtube_Shorts_Blocker'
         });
     }
 });
