@@ -5,7 +5,13 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         return;
     }
 
-    const url = new URL(changeInfo.url);
+    let url;
+
+    try {
+        url = new URL(changeInfo.url);
+    } catch {
+        return;
+    }
 
     const isYouTubeDomain =
         url.hostname === 'youtube.com' ||
@@ -17,14 +23,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     if (url.pathname.startsWith('/shorts/')) {
         ShortWatchedInARow++;
-
-        console.log("Shorts watched:", ShortWatchedInARow);
-    }
-    if (!url.pathname.startsWith('/shorts/')) {
+    } else {
         ShortWatchedInARow = 0;
     }
 
-    if (ShortWatchedInARow >= 1) {
+    if (ShortWatchedInARow >= 2) {
         ShortWatchedInARow = 0;
 
         chrome.tabs.update(tabId, {
