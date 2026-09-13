@@ -24,7 +24,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         ShortWatchedInARow = 0;
     }
 
-    if (ShortWatchedInARow >= 2) {
+    if (ShortWatchedInARow >= 1) {
         ShortWatchedInARow = 0;
 
         chrome.tabs.update(tabId, {
