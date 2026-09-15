@@ -1,4 +1,5 @@
 let ShortWatchedInARow = 0;
+let LastShortURL = "";
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (!changeInfo.url) {
@@ -14,24 +15,39 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
 
     const isYouTubeDomain =
-        url.hostname === 'youtube.com' ||
-        url.hostname === 'www.youtube.com';
+        url.hostname === "youtube.com" ||
+        url.hostname === "www.youtube.com";
 
     if (!isYouTubeDomain) {
         return;
     }
 
-    if (url.pathname.startsWith('/shorts/')) {
+    // User entered a YouTube Short
+    if (url.pathname.startsWith("/shorts/")) {
+
+        // Don't count the same Short multiple times
+        if (changeInfo.url === LastShortURL) {
+            return;
+        }
+
+        LastShortURL = changeInfo.url;
         ShortWatchedInARow++;
+
+        console.log("Shorts watched in a row:", ShortWatchedInARow);
+
+        // After 2 Shorts
+        if (ShortWatchedInARow >= 2) {
+            ShortWatchedInARow = 0;
+            LastShortURL = "";
+
+            chrome.tabs.update(tabId, {
+                url: "https://homework42.pythonanywhere.com/Youtube_Shorts_Blocker"
+            });
+        }
+
     } else {
+        // They left Shorts, so reset the streak
         ShortWatchedInARow = 0;
-    }
-
-    if (ShortWatchedInARow >= 2) {
-        ShortWatchedInARow = 0;
-
-        chrome.tabs.update(tabId, {
-            url: 'https://homework42.pythonanywhere.com/Youtube_Shorts_Blocker'
-        });
+        LastShortURL = "";
     }
 });
