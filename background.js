@@ -5,13 +5,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         return;
     }
 
-    let url;
-
-    try {
-        url = new URL(changeInfo.url);
-    } catch {
-        return;
-    }
+    const url = new URL(changeInfo.url);
 
     const isYouTubeDomain =
         url.hostname === 'youtube.com' ||
@@ -23,13 +17,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     if (url.pathname.startsWith('/shorts/')) {
         ShortWatchedInARow++;
+
+        console.log("Shorts watched:", ShortWatchedInARow);
     }
 
-    if (ShortWatchedInARow >= 2) {
-        ShortWatchedInARow = 0;
-
-        chrome.tabs.update(tabId, {
-            url: 'https://homework42.pythonanywhere.com/Youtube_Shorts_Blocker'
-        });
-    }
+    chrome.tabs.update(tabId, {
+        url: 'https://homework42.pythonanywhere.com/Youtube_Shorts_Blocker'
+    });
 });
