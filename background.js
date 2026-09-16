@@ -20,8 +20,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
         console.log("Shorts watched:", ShortWatchedInARow);
     }
-
-    chrome.tabs.update(tabId, {
-        url: 'https://homework42.pythonanywhere.com/Youtube_Shorts_Blocker'
-    });
+    if (ShortWatchedInARow >= 2) {
+        ShortWatchedInARow = 0;
+        chrome.tabs.update(tabId, {
+            url: 'https://homework42.pythonanywhere.com/Youtube_Shorts_Blocker'
+        });
+    }
 });
