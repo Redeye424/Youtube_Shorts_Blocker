@@ -23,8 +23,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     if (url.pathname.startsWith('/shorts/')) {
         ShortWatchedInARow++;
-    } else {
-        ShortWatchedInARow = 0;
     }
 
     if (ShortWatchedInARow >= 2) {
