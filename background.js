@@ -12,13 +12,13 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         url.hostname === 'youtube.com' ||
         url.hostname === 'www.youtube.com';
 
+    if (url === 'https://homework42.pythonanywhere.com/Youtube_Shorts_Blocker') {
+        ComingFromRedirect = true;
+    }
+    
     if (!isYouTubeDomain) {
         return;
         ComingFromRedirect = false;
-    }
-
-    if (url === 'https://homework42.pythonanywhere.com/Youtube_Shorts_Blocker') {
-        ComingFromRedirect = true;
     }
 
     if (url.pathname.startsWith('/shorts/')) {
