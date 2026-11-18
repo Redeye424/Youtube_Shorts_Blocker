@@ -1,7 +1,8 @@
 const REDIRECT_URL = 'https://homework42.pythonanywhere.com/Youtube_Shorts_Blocker';
 const REDIRECT_ORIGIN = 'https://homework42.pythonanywhere.com';
 const REDIRECT_PATH = '/Youtube_Shorts_Blocker';
-const tabStates = new Map();
+const shortsWatchedInARow = new Map();
+let blockedByRedirect = false;
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
     if (!changeInfo.url) {
@@ -19,7 +20,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
         url.origin === REDIRECT_ORIGIN &&
         url.pathname.replace(/\/+$/, '') === REDIRECT_PATH
     ) {
-        tabStates.set(tabId, { shortsWatchedInARow: 0, blocked: true });
+        blockedByRedirect = true;
+        shortsWatchedInARow.delete(tabId);
         return;
     }
 
@@ -29,39 +31,32 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
         url.hostname === 'm.youtube.com';
 
     if (!isYouTubeDomain) {
-        tabStates.set(tabId, { shortsWatchedInARow: 0, blocked: false });
+        blockedByRedirect = false;
+        shortsWatchedInARow.delete(tabId);
         return;
     }
 
     if (!url.pathname.startsWith('/shorts/')) {
-        const state = tabStates.get(tabId);
-        if (state) {
-            state.shortsWatchedInARow = 0;
-        }
+        shortsWatchedInARow.delete(tabId);
         return;
     }
 
-    const state = tabStates.get(tabId) || {
-        shortsWatchedInARow: 0,
-        blocked: false
-    };
-
-    if (state.blocked) {
+    if (blockedByRedirect) {
         chrome.tabs.update(tabId, { url: REDIRECT_URL });
         return;
     }
 
-    state.shortsWatchedInARow++;
-    console.log('Shorts watched:', state.shortsWatchedInARow);
-    tabStates.set(tabId, state);
+    const count = (shortsWatchedInARow.get(tabId) || 0) + 1;
+    shortsWatchedInARow.set(tabId, count);
+    console.log('Shorts watched:', count);
 
-    if (state.shortsWatchedInARow >= 2) {
-        state.shortsWatchedInARow = 0;
-        state.blocked = true;
+    if (count >= 2) {
+        blockedByRedirect = true;
+        shortsWatchedInARow.delete(tabId);
         chrome.tabs.update(tabId, { url: REDIRECT_URL });
     }
 });
 
 chrome.tabs.onRemoved.addListener((tabId) => {
-    tabStates.delete(tabId);
+    shortsWatchedInARow.delete(tabId);
 });
